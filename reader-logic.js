@@ -1,13 +1,11 @@
-// 1. DEKLARASI GLOBAL (Nadi Utama)
+// 1. GLOBAL & FILE HANDLER
 window.pages = [];
 window.currentPage = 0;
 window.isDoubleMode = true;
 window.isWebtoonMode = false;
 
-// Setup Worker PDF (Wajib untuk PDF.js)
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-// 2. FUNGSI HANDLE FILE (ZIP/PDF)
 window.handleFile = async function(file) {
     if (!file) return;
     const container = document.getElementById('viewerCanvas');
@@ -41,7 +39,7 @@ window.handleFile = async function(file) {
     }
 };
 
-// 3. LOGIK NAVIGASI & MOD
+// 2. NAVIGASI & UPDATE UI
 window.toggleDouble = function() {
     window.isWebtoonMode = false;
     window.isDoubleMode = !window.isDoubleMode;
@@ -57,7 +55,7 @@ window.toggleWebtoon = function() {
 };
 
 window.changePage = function(step) {
-    if (window.isWebtoonMode) return; // Tak payah tukar page kalau skrol
+    if (window.isWebtoonMode) return; // Webtoon cuma skrol, tak perlu button page
     
     let move = (window.isDoubleMode && window.currentPage > 0) ? step * 2 : step;
     let next = window.currentPage + move;
@@ -76,7 +74,7 @@ window.updateButtonLabels = function() {
     if(wBtn) wBtn.innerText = `WEBTOON: ${window.isWebtoonMode ? 'ON' : 'OFF'}`;
 };
 
-// 4. LOGIK RENDER (Paparan Utama)
+// 3. RENDERER & OBSERVER
 window.renderViewer = async function() {
     const container = document.getElementById('viewerCanvas');
     if (!container) return;
@@ -85,16 +83,17 @@ window.renderViewer = async function() {
     const navs = document.querySelectorAll('.btn-nav');
     navs.forEach(b => b.style.display = window.isWebtoonMode ? 'none' : 'inline-block');
 
-if (window.isWebtoonMode) {
-        // Render semua gambar (Mod Webtoon)
+    if (window.isWebtoonMode) {
+        // Render semua gambar sekaligus untuk mod Webtoon
         for (let i = 0; i < window.pages.length; i++) {
             const pageNode = await window.createNode(i, "100%");
-            pageNode.setAttribute('data-index', i + 1); // Simpan nombor page kat gambar
+            pageNode.setAttribute('data-index', i + 1);
             container.appendChild(pageNode);
         }
-        // Jalankan "mata" pemerhati (Observer)
+        // Jalankan sistem perhati skrol (Observer)
         window.setupWebtoonObserver();
     } else {
+        // Paparan Single atau Double Page
         if (window.isDoubleMode && window.currentPage > 0 && window.currentPage < window.pages.length - 1) {
             const row = document.createElement('div');
             row.className = 'double-page-row';
@@ -110,27 +109,19 @@ if (window.isWebtoonMode) {
 };
 
 window.setupWebtoonObserver = function() {
-    const options = {
-        root: null,
-        threshold: 0.3 // Gambar nampak 30% baru dia kira "page tu"
-    };
-
+    const options = { root: null, threshold: 0.2, rootMargin: "-10% 0px -60% 0px" };
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 const pageIndex = entry.target.getAttribute('data-index');
                 document.getElementById('pageCounter').innerText = `P. ${pageIndex} / ${window.pages.length}`;
-                // Update currentPage supaya kalau user switch mode, dia tak melompat ke page lain
                 window.currentPage = parseInt(pageIndex) - 1;
             }
         });
     }, options);
-
-    // Suruh observer perhati semua gambar manga
     document.querySelectorAll('.manga-page').forEach(img => observer.observe(img));
 };
 
-// 5. PEMBINA ELEMENT (IMG/CANVAS)
 window.createNode = async function(index, width) {
     const data = window.pages[index];
     let el;
@@ -141,8 +132,7 @@ window.createNode = async function(index, width) {
         el = document.createElement('canvas');
         const page = await data.doc.getPage(data.num);
         const viewport = page.getViewport({scale: 1.5});
-        el.height = viewport.height;
-        el.width = viewport.width;
+        el.height = viewport.height; el.width = viewport.width;
         await page.render({canvasContext: el.getContext('2d'), viewport}).promise;
     }
     el.className = 'manga-page';
