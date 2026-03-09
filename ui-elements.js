@@ -10,11 +10,7 @@ const toolbar = `
         <button class="btn-mode" id="webtoonBtn" onclick="toggleWebtoon()">WEBTOON: OFF</button>
         <input type="file" id="fileInput" hidden onchange="handleFile(this.files[0])">
         <label for="fileInput" class="btn-upload">OPEN</label>
-    </div>
-
-    <div id="pdf-main-container"> 
-        <canvas id="pdf-render"></canvas> 
-        </div>
+        
 </div>
 `;
 
