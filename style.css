@@ -15,20 +15,45 @@ body { background: #0b0e11; color: white; font-family: 'Segoe UI', sans-serif; }
 /* Tooltip/Footer Style */
 .reader-footer {
     position: fixed;
-    bottom: 25px;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(23, 23, 23, 0.9);
-    padding: 12px 25px;
-    border-radius: 20px;
+    background: rgba(23, 23, 23, 0.95);
+    padding: 10px 15px;
+    border-radius: 15px;
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 10px;
     backdrop-filter: blur(15px);
     border: 1px solid #333;
     z-index: 9999;
+
+    /* LOGIK UNTUK HP (PENTING) */
+    width: 95%;            /* Supaya tak rapat sangat dengan tepi skrin */
+    max-width: 500px;      /* Limit lebar kat Desktop */
+    overflow-x: auto;      /* Boleh skrol ke tepi kalau butang melimpah */
+    white-space: nowrap;   /* Jangan bagi butang turun bawah (wrap) */
+    scrollbar-width: none; /* Sorok scrollbar kat Firefox */
 }
 
+/* Sorok scrollbar kat Chrome/Safari */
+.reader-footer::-webkit-scrollbar {
+    display: none;
+}
+
+/* Kecilkan butang sikit kalau kat HP */
+@media (max-width: 480px) {
+    .btn-nav, .btn-mode, .btn-upload {
+        padding: 8px 10px;
+        font-size: 10px;
+        flex-shrink: 0; /* Jangan bagi butang jadi kemek */
+    }
+    #pageCounter {
+        font-size: 11px;
+        min-width: 80px;
+        flex-shrink: 0;
+    }
+}
 .btn-nav, .btn-mode, .btn-upload {
     background: #5d5fef;
     color: white;
