@@ -85,11 +85,15 @@ window.renderViewer = async function() {
     const navs = document.querySelectorAll('.btn-nav');
     navs.forEach(b => b.style.display = window.isWebtoonMode ? 'none' : 'inline-block');
 
-    if (window.isWebtoonMode) {
+if (window.isWebtoonMode) {
+        // Render semua gambar (Mod Webtoon)
         for (let i = 0; i < window.pages.length; i++) {
-            container.appendChild(await window.createNode(i, "100%"));
+            const pageNode = await window.createNode(i, "100%");
+            pageNode.setAttribute('data-index', i + 1); // Simpan nombor page kat gambar
+            container.appendChild(pageNode);
         }
-        document.getElementById('pageCounter').innerText = `Webtoon Mode (${window.pages.length} Pages)`;
+        // Jalankan "mata" pemerhati (Observer)
+        window.setupWebtoonObserver();
     } else {
         if (window.isDoubleMode && window.currentPage > 0 && window.currentPage < window.pages.length - 1) {
             const row = document.createElement('div');
@@ -103,6 +107,27 @@ window.renderViewer = async function() {
             document.getElementById('pageCounter').innerText = `P. ${window.currentPage + 1} / ${window.pages.length}`;
         }
     }
+};
+
+window.setupWebtoonObserver = function() {
+    const options = {
+        root: null,
+        threshold: 0.3 // Gambar nampak 30% baru dia kira "page tu"
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const pageIndex = entry.target.getAttribute('data-index');
+                document.getElementById('pageCounter').innerText = `P. ${pageIndex} / ${window.pages.length}`;
+                // Update currentPage supaya kalau user switch mode, dia tak melompat ke page lain
+                window.currentPage = parseInt(pageIndex) - 1;
+            }
+        });
+    }, options);
+
+    // Suruh observer perhati semua gambar manga
+    document.querySelectorAll('.manga-page').forEach(img => observer.observe(img));
 };
 
 // 5. PEMBINA ELEMENT (IMG/CANVAS)
