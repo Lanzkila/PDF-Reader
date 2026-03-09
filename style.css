@@ -91,32 +91,19 @@ body { background: #0b0e11; color: white; font-family: 'Segoe UI', sans-serif; o
     background: #0d1117;
     border: 1px solid #30363d;
     border-radius: 12px;
-    padding: 10px;
-    max-width: 95%; /* Biar dia ikut lebar skrin */
-    margin: 10px auto;
-    display: inline-block; /* Kotak akan ikut saiz PDF kat dalam */
-    min-width: 300px;
-}
-
-.pdf-viewer-area {
-    background: #161b22;
-    border-radius: 6px;
-    margin-top: 10px;
-    display: flex;
-    justify-content: center;
-    overflow: auto;
-    min-height: 50px; /* Biar dia nipis kalau kosong */
+    padding: 15px;
+    max-width: 800px;
+    margin: 20px auto;
 }
 
 .pdf-toolbar {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    gap: 10px;
-    flex-wrap: wrap; /* Penting untuk mobile */
     background: #161b22;
-    padding: 15px;
+    padding: 10px 15px;
     border-radius: 8px;
+    margin-bottom: 10px;
 }
 
 .pdf-btn {
