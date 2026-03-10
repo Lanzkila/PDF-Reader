@@ -1,16 +1,17 @@
-const toolbar = `
-<div class="pdf-container">
-    <div class="pdf-toolbar">
-        <button class="pdf-btn" id="prev-page">PREV</button>
-        <div class="page-info">
-            PAGE <span id="page-num">1</span> / <span id="page-count">0</span>
-        </div>
-        <button class="pdf-btn" id="next-page">NEXT</button>
-        <button class="btn-mode" id="doubleBtn" onclick="toggleDouble()">2-PAGE: ON</button>
-        <button class="btn-mode" id="webtoonBtn" onclick="toggleWebtoon()">WEBTOON: OFF</button>
-        <input type="file" id="fileInput" hidden onchange="handleFile(this.files[0])">
-        <label for="fileInput" class="btn-upload">OPEN</label>    
+// ui-elements.js
+const footerHTML = `
+<div class="reader-footer">
+    <button class="btn-nav" onclick="changePage(-1)">PREV</button>
+    <span id="pageCounter">P. 0 / 0</span>
+    <button class="btn-nav" onclick="changePage(1)">NEXT</button>
+    
+    <button id="doubleBtn" class="btn-mode" onclick="toggleDouble()">2-PAGE: ON</button>
+    <button id="webtoonBtn" class="btn-mode" onclick="toggleWebtoon()">WEBTOON: OFF</button>
+    
+    <input type="file" id="filePicker" onchange="handleFile(this.files[0])" hidden>
+    <button class="btn-upload" onclick="document.getElementById('filePicker').click()">OPEN</button>
 </div>
 `;
 
-document.body.insertAdjacentHTML('beforeend', toolbar);
+// Masukkan menu ni kat bawah sekali dalam body
+document.body.insertAdjacentHTML('beforeend', footerHTML);
